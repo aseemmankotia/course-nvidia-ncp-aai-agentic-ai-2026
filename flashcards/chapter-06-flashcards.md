@@ -1,0 +1,16 @@
+## Chapter 6: Retrieval-Augmented Generation for Agents — Flashcards
+
+| # | Front (Question) | Back (Answer) |
+|---|-----------------|---------------|
+| 1 | Typical chunk size and overlap for RAG text chunking? | ~300-500 tokens per chunk, 10-20% overlap between adjacent chunks. Exam tip: too-large chunks dilute embeddings; too-small chunks fragment context. |
+| 2 | Typical retrieve-then-rerank candidate sizes? | Retrieve top 20-50 candidates via fast ANN/bi-encoder, then re-rank down to top 3-5 with a cross-encoder before grounding. Exam tip: two-stage design balances latency and precision. |
+| 3 | Default BM25 tuning parameters k1 and b? | k1 ≈ 1.2-2.0 (term frequency saturation), b ≈ 0.75 (document length normalization). Exam tip: BM25 is the keyword half of hybrid retrieval. |
+| 4 | Dense embedding retrieval vs BM25 keyword retrieval — when to use each? | Dense: semantic/paraphrased queries, conceptual similarity. BM25: exact terms, IDs, rare/technical tokens. Exam tip: hybrid = BM25 + dense to cover both cases. |
+| 5 | RAG vs long-context stuffing — key trade-off? | RAG: lower per-query cost/latency, scalable, supports citation, requires indexing infra. Stuffing: simpler pipeline but cost/latency scale with corpus size and risks 'lost in the middle' accuracy loss. |
+| 6 | Standard RAG pipeline stages (in order)? | Chunk → Embed → Store (vector DB) → Retrieve (dense/hybrid) → Re-rank → Ground/Generate. Exam tip: each stage is independently tested for design choices. |
+| 7 | Role of a re-ranker in a RAG pipeline? | A cross-encoder scores each (query, chunk) pair jointly for relevance, improving precision over the initial bi-encoder ANN retrieval, which scores independently. Exam tip: re-ranking trades latency for accuracy on a small candidate set. |
+| 8 | How does an agent 'ground' actions in trusted retrieved knowledge? | Retrieved chunks are passed as context with source attribution; the agent must cite/reference the source before acting on a claim, reducing hallucination and enabling auditability. Exam tip: grounding = traceability, not just relevance. |
+| 9 | Hybrid retrieval score fusion — common methods? | Weighted sum: score = α·dense_score + (1-α)·BM25_score, OR Reciprocal Rank Fusion (RRF) combining ranks from each method. Exam tip: RRF avoids needing score normalization across methods. |
+| 10 | Cost driver difference: RAG vs long-context stuffing at scale? | RAG cost = embedding + storage + small retrieved-context tokens per query (low, roughly flat with corpus growth). Stuffing cost = pay for full context tokens every call (scales up with corpus size). Exam tip: RAG is the cost-efficient choice for large/growing knowledge bases. |
+| 11 | Typical embedding dimension ranges for common models? | Small/fast models ~384 dims (e.g., MiniLM-class); mid-size ~1536 dims (e.g., text-embedding-3-small); large ~3072 dims (e.g., text-embedding-3-large). Exam tip: higher dims = higher storage/compute cost, not always better retrieval. |
+| 12 | Symmetric vs asymmetric embedding models — when to use each? | Symmetric: comparing similar-length texts (sentence-to-sentence similarity). Asymmetric: short query vs long document retrieval (search-optimized). Exam tip: mismatch here is a common exam trap in service selection questions. |
